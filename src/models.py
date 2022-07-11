@@ -5,29 +5,65 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 from eralchemy import render_er
-
+from sqlalchemy import Table
 Base = declarative_base()
 
-class Person(Base):
-    __tablename__ = 'person'
-    # Here we define columns for the table person
-    # Notice that each column is also a normal Python instance attribute.
+association_table = Table(
+    "favoritos",
+    Base.metadata,
+    Column("usuario_id", ForeignKey("usuario.id")),
+    Column("personaje_id", ForeignKey("personaje.id")),
+)
+
+class Personaje(Base):
+    __tablename__ = 'personaje'
     id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
+    nombre = Column(String(250))
+    altura=Column(String(200))
+    personalidad=Column(String(300))
+    naves = relationship("Naves")
+    planetas = relationship("Planetas")
+    especies = relationship("Especies")
+    usuario = relationship("Usuario", secondary=association_table)
 
-class Address(Base):
-    __tablename__ = 'address'
-    # Here we define columns for the table address.
-    # Notice that each column is also a normal Python instance attribute.
+class Naves(Base):
+    __tablename__ = 'naves'
     id = Column(Integer, primary_key=True)
-    street_name = Column(String(250))
-    street_number = Column(String(250))
-    post_code = Column(String(250), nullable=False)
-    person_id = Column(Integer, ForeignKey('person.id'))
-    person = relationship(Person)
+    forma = Column(String(250))
+    caracteristicas= Column(String(250))
+    color = Column(String(250))
+    personaje_que_conduce =  Column(String(250))
+    personaje_id = Column(Integer, ForeignKey("personaje.id"))
 
-    def to_dict(self):
-        return {}
 
-## Draw from SQLAlchemy base
+class Planetas(Base):
+    __tablename__ = 'planetas'
+    id = Column(Integer, primary_key=True)
+    forma = Column(String(250))
+    caracteristicas= Column(String(250))
+    especies_que_habitan = Column(String(250))
+    personaje_id = Column(Integer, ForeignKey("personaje.id"))
+
+
+class Especies (Base):
+    __tablename__ = 'especies'
+    id = Column(Integer, primary_key=True)
+    genero = Column(String(250))
+    caracteristicas= Column(String(250))
+    especies_que_habitan = Column(String(250))
+    personaje_id = Column(Integer, ForeignKey("personaje.id"))
+
+class Usario (Base):
+    __tablename__ = 'usuario'
+    id = Column(Integer, primary_key=True)
+    nombre = Column(String(250))
+    e_mail= Column(String(250))
+    nombre_de_usuario = Column(String(250))
+    planetas = relationship("Planetas", secondary=favoritos_table)
+    especies = relationship("Especies", secondary=favoritos_table)
+    naves = relationship("Naves", secondary=favoritos_table)
+    personajes = relationship("Personajes", secondary=favorites_table)
+
+
+
 render_er(Base, 'diagram.png')
