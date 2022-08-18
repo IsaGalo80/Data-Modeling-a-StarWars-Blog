@@ -24,7 +24,7 @@ class Personaje(Base):
     naves = relationship("Naves")
     planetas = relationship("Planetas")
     especies = relationship("Especies")
-    usuario = relationship("Usuario", secondary=association_table)
+    usuario = relationship("Usuario", secondary="favoritos")
 
 class Naves(Base):
     __tablename__ = 'naves'
@@ -59,10 +59,10 @@ class Usario (Base):
     nombre = Column(String(250))
     e_mail= Column(String(250))
     nombre_de_usuario = Column(String(250))
-    planetas = relationship("Planetas", secondary=favoritos_table)
-    especies = relationship("Especies", secondary=favoritos_table)
-    naves = relationship("Naves", secondary=favoritos_table)
-    personajes = relationship("Personajes", secondary=favorites_table)
+    planetas = relationship("Planetas")
+    especies = relationship("Especies")
+    naves = relationship("Naves")
+    personajes = relationship("Personajes", secondary="favoritos")
 
 
 
